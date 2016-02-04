@@ -1,6 +1,6 @@
 import sbt.Keys._
 import sbt._
-import xerial.sbt._
+import net.virtualvoid.sbt.graph._
 
 import gov.nasa.jpl.imce.sbt._
 
@@ -78,27 +78,60 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
 
           s.log.info(s"====== $projectName =====")
 
-          val providedOrganizationArtifacts: Set[String] = (for {
-            cReport <- up.configurations
-            if Configurations.Provided.name == cReport.configuration
-            oReport <- cReport.details
-            mReport <- oReport.modules
-            (artifact, file) <- mReport.artifacts
-            if "jar" == artifact.extension
-          } yield {
-            s.log.info(s"provided: ${oReport.organization}, ${file.name}")
-            s"{oReport.organization},${oReport.name}"
-          }).to[Set]
+          val compileConfig: ConfigurationReport = {
+            up.configurations.find((c: ConfigurationReport) => Configurations.Compile.name == c.configuration).get
+          }
+
+          def transitiveScope(modules: Set[Module], g: ModuleGraph): Set[Module] = {
+
+            @annotation.tailrec
+            def acc(focus: Set[Module], result: Set[Module]): Set[Module] = {
+              val next = g.edges.flatMap { case (fID, tID) =>
+                focus.find(m => m.id == fID).flatMap { _ =>
+                  g.nodes.find(m => m.id == tID)
+                }
+              }.to[Set]
+              if (next.isEmpty)
+                result
+              else
+                acc(next, result ++ next)
+            }
+
+            acc(modules, Set())
+          }
+
+          val zipFiles: Set[File] = {
+            val jars = for {
+              oReport <- compileConfig.details
+              mReport <- oReport.modules
+              (artifact, file) <- mReport.artifacts
+              if "zip" == artifact.extension
+              file <- {
+                s.log.info(s"compile: ${oReport.organization}, ${file.name}")
+                val graph = backend.SbtUpdateReport.fromConfigurationReport(compileConfig, mReport.module)
+                val roots: Set[Module] = graph.nodes.filter { m =>
+                  m.id.organisation == mReport.module.organization &&
+                    m.id.name == mReport.module.name &&
+                    m.id.version == mReport.module.revision
+                }.to[Set]
+                val scope: Seq[Module] = transitiveScope(roots, graph).to[Seq].sortBy( m => m.id.organisation + m.id.name)
+                val files = scope.flatMap { m: Module => m.jarFile }.to[Seq].sorted
+                s.log.info(s"Excluding ${files.size} jars from zip aggregate resource dependencies")
+                files.foreach { f =>
+                  s.log.info(s" exclude: ${f.getParentFile.getParentFile.name}/${f.getParentFile.name}/${f.name}")
+                }
+                files
+              }
+            } yield file
+            jars.to[Set]
+          }
 
           val fileArtifacts = for {
-            cReport <- up.configurations
-            if Configurations.Compile.name == cReport.configuration
-            oReport <- cReport.details
+            oReport <- compileConfig.details
             organizationArtifactKey = s"{oReport.organization},${oReport.name}"
-            if !providedOrganizationArtifacts.contains(organizationArtifactKey)
             mReport <- oReport.modules
             (artifact, file) <- mReport.artifacts
-            if "jar" == artifact.extension
+            if "jar" == artifact.extension && !zipFiles.contains(file)
           } yield (oReport.organization, oReport.name, file, artifact)
 
           val fileArtifactsByType = fileArtifacts.groupBy { case (_, _, _, a) =>
@@ -133,7 +166,7 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
 lazy val graphLibs = IMCEThirdPartyProject("scala-graph-libraries", "graphLibs")
   .settings(
     libraryDependencies ++= Seq(
-      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions.other_scala_libraries % "compile" artifacts
+      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions_other_scala_libraries.version % "compile" artifacts
         Artifact("other-scala-libraries", "zip", "zip", Some("resource"), Seq(), None, Map()),
 
       "org.scala-lang" % "scalap" % scalaVersion.value % "provided",
