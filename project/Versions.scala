@@ -2,7 +2,7 @@
 object Versions {
 
   // this project's version
-  val version = "1.17"
+  val version = "2.0"
   val scala_version = "2.11.7"
 
   // graphLibs
