@@ -174,8 +174,8 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
 lazy val graphLibs = IMCEThirdPartyProject("scala-graph-libraries", "graphLibs")
   .settings(
     libraryDependencies ++= Seq(
-      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions_scala_libraries.version
-        extra("artifact.kind" -> "third_party.aggregate.libraries")
+      // extra("artifact.kind" -> "third_party.aggregate.libraries")
+      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions_other_scala_libraries.version
         artifacts
         Artifact("other-scala-libraries", "zip", "zip", Some("resource"), Seq(), None, Map()),
 
