@@ -25,7 +25,13 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
       IMCEKeys.licenseYearOrRange := "2015-2016",
       IMCEKeys.organizationInfo := IMCEPlugin.Organizations.thirdParty,
       git.baseVersion := Versions.version,
-      scalaVersion := Versions.scala_version
+      scalaVersion := Versions.scala_version,
+      projectID := {
+        val previous = projectID.value
+        previous.extra(
+          "build.date.utc" -> buildUTCDate.value,
+          "artifact.kind" -> "third_party.aggregate.libraries")
+      }
     )
     .settings(
 
@@ -115,7 +121,7 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
                     m.id.version == mReport.module.revision
                 }.to[Set]
                 val scope: Seq[Module] = transitiveScope(roots, graph).to[Seq].sortBy( m => m.id.organisation + m.id.name)
-                val files = scope.flatMap { m: Module => m.jarFile }.to[Seq].sorted
+                val files = scope.flatMap { m: Module => m.jarFile }.sorted
                 s.log.info(s"Excluding ${files.size} jars from zip aggregate resource dependencies")
                 files.foreach { f =>
                   s.log.info(s" exclude: ${f.getParentFile.getParentFile.name}/${f.getParentFile.name}/${f.name}")
@@ -168,7 +174,9 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
 lazy val graphLibs = IMCEThirdPartyProject("scala-graph-libraries", "graphLibs")
   .settings(
     libraryDependencies ++= Seq(
-      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions_other_scala_libraries.version % "compile" artifacts
+      "gov.nasa.jpl.imce.thirdParty" %% "other-scala-libraries" % Versions_scala_libraries.version
+        extra("artifact.kind" -> "third_party.aggregate.libraries")
+        artifacts
         Artifact("other-scala-libraries", "zip", "zip", Some("resource"), Seq(), None, Map()),
 
       "org.scala-lang" % "scalap" % scalaVersion.value % "provided",
