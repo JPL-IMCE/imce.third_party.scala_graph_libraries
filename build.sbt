@@ -174,6 +174,7 @@ lazy val graphLibs = IMCEThirdPartyProject("scala-graph-libraries", "graphLibs")
 
     libraryDependencies ++= Seq(
       "gov.nasa.jpl.imce" %% "imce.third_party.other_scala_libraries" % Versions_other_scala_libraries.version
+        % "compile"
         artifacts
         Artifact("imce.third_party.other_scala_libraries", "zip", "zip", Some("resource"), Seq(), None, Map()),
 
