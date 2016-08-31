@@ -1,7 +1,7 @@
 # IMCE Third-Party Scala Graph Libraries
 
-[![Build Status](https://travis-ci.org/JPL-IMCE/imce.third_party.scala_graph_scala_libraries.svg?branch=master)](https://travis-ci.org/JPL-IMCE/imce.third_party.scala_graph_scala_libraries)
-[ ![Download](https://api.bintray.com/packages/jpl-imce/gov.nasa.jpl.imce/imce.third_party.scala_graph_scala_libraries/images/download.svg) ](https://bintray.com/jpl-imce/gov.nasa.jpl.imce/imce.third_party.scala_graph_scala_libraries/_latestVersion)
+[![Build Status](https://travis-ci.org/JPL-IMCE/imce.third_party.scala_graph_libraries.svg?branch=master)](https://travis-ci.org/JPL-IMCE/imce.third_party.scala_graph_libraries)
+[ ![Download](https://api.bintray.com/packages/jpl-imce/gov.nasa.jpl.imce/imce.third_party.scala_graph_libraries/images/download.svg) ](https://bintray.com/jpl-imce/gov.nasa.jpl.imce/imce.third_party.scala_graph_libraries/_latestVersion)
  
 This project builds an aggregates of several Scala libraries for graph data structures published 
 by several organizations:
