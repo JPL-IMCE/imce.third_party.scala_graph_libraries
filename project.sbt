@@ -8,13 +8,11 @@ organization := "gov.nasa.jpl.imce"
 
 organizationName := "JPL-IMCE"
 
+organizationHomepage := Some(url(s"https://github.com/${organizationName.value}"))
+
 homepage := Some(url(s"https://github.com/${organizationName.value}/${moduleName.value}"))
 
-organizationHomepage := Some(url("http://www.jpl.nasa.gov"))
-
 git.remoteRepo := s"git@github.com:${organizationName.value}/${moduleName.value}.git"
-
-startYear := Some(2015)
 
 scmInfo := Some(ScmInfo(
   browseUrl = url(s"https://github.com/${organizationName.value}/${moduleName.value}"),
