@@ -185,15 +185,15 @@ lazy val graphLibs = IMCEThirdPartyProject("scala-graph-libraries", "graphLibs")
 
       "org.scala-lang" % "scalap" % scalaVersion.value % "provided",
 
-      "com.assembla.scala-incubator" %% "graph-core" % Versions.graph_core %
+      "org.scala-graph" %% "graph-core" % Versions.graph_core %
       "compile" withSources() withJavadoc(),
 
-      "com.assembla.scala-incubator" %% "graph-constrained" % Versions.graph_constrained %
+      "org.scala-graph" %% "graph-constrained" % Versions.graph_constrained %
       "compile" withSources() withJavadoc(),
 
-      "com.assembla.scala-incubator" %% "graph-json" % Versions.graph_json %
+      "org.scala-graph" %% "graph-json" % Versions.graph_json %
       "compile" withSources() withJavadoc(),
 
-      "com.assembla.scala-incubator" %% "graph-dot" % Versions.graph_dot %
+      "org.scala-graph" %% "graph-dot" % Versions.graph_dot %
       "compile" withSources() withJavadoc()
     ))
