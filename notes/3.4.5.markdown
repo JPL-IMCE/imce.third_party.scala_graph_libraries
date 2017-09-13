@@ -1,0 +1,5 @@
+imce.third_party.scala_graph_libraries 3.4.5 is a minor update.
+
+## Issues Resolved
+
+- [#1 Update scala-graph](https://github.com/JPL-IMCE/imce.third_party.scala_graph_libraries/issues/1)

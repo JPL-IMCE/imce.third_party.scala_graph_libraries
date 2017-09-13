@@ -11,8 +11,6 @@ val resourceArtifact = settingKey[Artifact]("Specifies the project's resource ar
 def IMCEThirdPartyProject(projectName: String, location: String): Project =
   Project(projectName, file("."))
     .enablePlugins(IMCEGitPlugin)
-    .enablePlugins(IMCEReleasePlugin)
-    .settings(IMCEReleasePlugin.packageReleaseProcessSettings)
     .settings(
       IMCEKeys.targetJDK := IMCEKeys.jdk18.value,
       IMCEKeys.licenseYearOrRange := "2015-2016",
@@ -158,8 +156,6 @@ def IMCEThirdPartyProject(projectName: String, location: String): Project =
 
         jars ++ srcs ++ docs
       },
-
-      extractArchives := {},
 
       artifacts += {
         val n = (name in Universal).value
